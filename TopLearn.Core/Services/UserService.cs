@@ -54,6 +54,11 @@ namespace TopLearn.Core.Services
             return _context.Users.SingleOrDefault(u => u.Email == email);
         }
 
+        public User GetUserById(int userId)
+        {
+            return _context.Users.Find(userId);
+        }
+
         public User GetUserByActiveCode(string activeCode)
         {
             return _context.Users.SingleOrDefault(u => u.ActiveCode == activeCode);
@@ -284,6 +289,51 @@ namespace TopLearn.Core.Services
             #endregion
 
             return AddUser(addUser);
+        }
+
+        public EditUserViewModel GetUserForShowInEditMode(int userId)
+        {
+            return _context.Users.Where(u => u.UserId == userId)
+                .Select(u => new EditUserViewModel()
+                {
+                    UserId = u.UserId,
+                    AvatarName = u.UserAvatar,
+                    Email = u.Email,
+                    UserName = u.UserName,
+                    UserRoles = u.UserRoles.Select(r => r.RoleId).ToList()
+                }).Single();
+        }
+
+        public void EditUserByAdmin(EditUserViewModel editUser)
+        {
+            var user = GetUserById(editUser.UserId);
+            user.Email = editUser.Email;
+            if (!string.IsNullOrEmpty(editUser.Password))
+                user.Password = PasswordHelper.EncodePasswordMd5(editUser.Password);
+            if (editUser.UserAvatar != null)
+            {
+                //Delete old image
+                if (editUser.AvatarName != "Default.jpg")
+                {
+                    string deletePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatar",
+                        editUser.AvatarName);
+                    if (File.Exists(deletePath))
+                    {
+                        File.Delete(deletePath);
+                    }
+                }
+
+                //Save new image
+                user.UserAvatar = NameGenerator.GenerateUniqCode() + Path.GetExtension(editUser.UserAvatar.FileName);
+                string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatar", user.UserAvatar);
+                using (var stream = new FileStream(imagePath, FileMode.Create))
+                {
+                    editUser.UserAvatar.CopyTo(stream);
+                }
+            }
+
+            _context.Users.Update(user);
+            _context.SaveChanges();
         }
     }
 }

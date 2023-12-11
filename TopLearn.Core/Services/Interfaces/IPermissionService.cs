@@ -13,6 +13,7 @@ namespace TopLearn.Core.Services.Interfaces
 
         List<Role> GetRoles();
         void AddRolesToUser(List<int> roleIds, int userId);
+        void EditUserRoles(int userId, List<int> rolesId);
 
         #endregion
     }
