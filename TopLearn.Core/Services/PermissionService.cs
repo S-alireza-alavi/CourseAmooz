@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TopLearn.Core.Services.Interfaces;
 using TopLearn.DataLayer.Context;
 using TopLearn.DataLayer.Entities.Permissions;
 using TopLearn.DataLayer.Entities.User;
 
-namespace TopLearn.Core.Services.Interfaces
+namespace TopLearn.Core.Services
 {
     public class PermissionService : IPermissionService
     {
@@ -66,7 +67,7 @@ namespace TopLearn.Core.Services.Interfaces
         {
             //Delete All UserRoles
             _context.UserRoles.Where(r => r.UserId == userId).ToList().ForEach(r => _context.UserRoles.Remove(r));
-            
+
             //Add New Roles
             AddRolesToUser(rolesId, userId);
         }
@@ -101,7 +102,7 @@ namespace TopLearn.Core.Services.Interfaces
         {
             _context.RolePermissions.Where(p => p.RoleId == roleId)
                 .ToList().ForEach(p => _context.RolePermissions.Remove(p));
-            
+
             AddPermissionsToRole(roleId, permissions);
         }
 
