@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 using TopLearn.Core.Convertors;
 using TopLearn.Core.DTOs.User;
 using TopLearn.Core.Generator;
@@ -54,6 +55,11 @@ namespace TopLearn.Core.Services
             return _context.Users.SingleOrDefault(u => u.Email == email);
         }
 
+        public User GetUserById(int userId)
+        {
+            return _context.Users.Find(userId);
+        }
+
         public User GetUserByActiveCode(string activeCode)
         {
             return _context.Users.SingleOrDefault(u => u.ActiveCode == activeCode);
@@ -88,6 +94,13 @@ namespace TopLearn.Core.Services
             return _context.Users.Single(u => u.UserName == userName).UserId;
         }
 
+        public void DeleteUser(int userId)
+        {
+            User user = GetUserById(userId);
+            user.IsDeleted = true;
+            UpdateUser(user);
+        }
+
         public InformationUserViewModel GetUserInformation(string username)
         {
             var user = GetUserByUserName(username);
@@ -98,7 +111,18 @@ namespace TopLearn.Core.Services
             information.Wallet = BalanceUserWallet(username);
 
             return information;
+        }
 
+        public InformationUserViewModel GetUserInformation(int userId)
+        {
+            var user = GetUserById(userId);
+            InformationUserViewModel information = new InformationUserViewModel();
+            information.UserName = user.UserName;
+            information.Email = user.Email;
+            information.RegisterDate = user.RegisterDate;
+            information.Wallet = BalanceUserWallet(user.UserName);
+
+            return information;
         }
 
         public SideBarUserPanelViewModel GetSideBarUserPanelData(string username)
@@ -257,6 +281,32 @@ namespace TopLearn.Core.Services
             return list;
         }
 
+        public UsersForAdminViewModel GetDeletedUsers(int pageId = 1, string filterEmail = "", string filterUserName = "")
+        {
+            IQueryable<User> result = _context.Users.IgnoreQueryFilters().Where(u => u.IsDeleted);
+
+            if (!string.IsNullOrEmpty(filterEmail))
+            {
+                result = result.Where(u => u.Email.Contains(filterEmail));
+            }
+
+            if (!string.IsNullOrEmpty(filterUserName))
+            {
+                result = result.Where(u => u.UserName.Contains(filterUserName));
+            }
+
+            // Show Item in page
+            int take = 20;
+            int skip = (pageId - 1) * take;
+
+            UsersForAdminViewModel list = new UsersForAdminViewModel();
+            list.CurrentPage = pageId;
+            list.PageCount = result.Count() / take;
+            list.Users = result.OrderBy(u => u.RegisterDate).Skip(skip).Take(take).ToList();
+
+            return list;
+        }
+
         public int AddUserByAdmin(CreateUserViewModel user)
         {
             User addUser = new User();
@@ -284,6 +334,51 @@ namespace TopLearn.Core.Services
             #endregion
 
             return AddUser(addUser);
+        }
+
+        public EditUserViewModel GetUserForShowInEditMode(int userId)
+        {
+            return _context.Users.Where(u => u.UserId == userId)
+                .Select(u => new EditUserViewModel()
+                {
+                    UserId = u.UserId,
+                    AvatarName = u.UserAvatar,
+                    Email = u.Email,
+                    UserName = u.UserName,
+                    UserRoles = u.UserRoles.Select(r => r.RoleId).ToList()
+                }).Single();
+        }
+
+        public void EditUserByAdmin(EditUserViewModel editUser)
+        {
+            var user = GetUserById(editUser.UserId);
+            user.Email = editUser.Email;
+            if (!string.IsNullOrEmpty(editUser.Password))
+                user.Password = PasswordHelper.EncodePasswordMd5(editUser.Password);
+            if (editUser.UserAvatar != null)
+            {
+                //Delete old image
+                if (editUser.AvatarName != "Default.jpg")
+                {
+                    string deletePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatar",
+                        editUser.AvatarName);
+                    if (File.Exists(deletePath))
+                    {
+                        File.Delete(deletePath);
+                    }
+                }
+
+                //Save new image
+                user.UserAvatar = NameGenerator.GenerateUniqCode() + Path.GetExtension(editUser.UserAvatar.FileName);
+                string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatar", user.UserAvatar);
+                using (var stream = new FileStream(imagePath, FileMode.Create))
+                {
+                    editUser.UserAvatar.CopyTo(stream);
+                }
+            }
+
+            _context.Users.Update(user);
+            _context.SaveChanges();
         }
     }
 }

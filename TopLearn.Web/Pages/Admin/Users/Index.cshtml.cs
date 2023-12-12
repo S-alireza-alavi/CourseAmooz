@@ -20,10 +20,5 @@ namespace TopLearn.Web.Pages.Admin.Users
         {
             UsersForAdminViewModel = _userService.GetUsers(pageId, filterEmail, filterUserName);
         }
-
-        // public IActionResult OnPost()
-        // {
-        //     return Page();
-        // }
     }
 }

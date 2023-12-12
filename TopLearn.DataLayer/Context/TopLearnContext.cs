@@ -7,12 +7,12 @@ using TopLearn.DataLayer.Entities.Wallet;
 
 namespace TopLearn.DataLayer.Context
 {
-   public class TopLearnContext:DbContext
+    public class TopLearnContext : DbContext
     {
 
-        public TopLearnContext(DbContextOptions<TopLearnContext> options):base(options)
+        public TopLearnContext(DbContextOptions<TopLearnContext> options) : base(options)
         {
-            
+
         }
 
         #region User
@@ -30,5 +30,13 @@ namespace TopLearn.DataLayer.Context
         public DbSet<Wallet> Wallets { get; set; }
 
         #endregion
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>()
+                .HasQueryFilter(u => !u.IsDeleted);
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

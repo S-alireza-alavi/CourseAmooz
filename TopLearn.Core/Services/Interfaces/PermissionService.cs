@@ -35,5 +35,14 @@ namespace TopLearn.Core.Services.Interfaces
                 _context.SaveChanges();
             }
         }
+
+        public void EditUserRoles(int userId, List<int> rolesId)
+        {
+            //Delete All UserRoles
+            _context.UserRoles.Where(r => r.UserId == userId).ToList().ForEach(r => _context.UserRoles.Remove(r));
+            
+            //Add New Roles
+            AddRolesToUser(rolesId, userId);
+        }
     }
 }
