@@ -1,30 +1,33 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using TopLearn.Core.DTOs.User;
+using TopLearn.Core.Security;
 using TopLearn.Core.Services.Interfaces;
 
-namespace TopLearn.Web.Pages.Admin.Users;
-
-public class DeleteUser : PageModel
+namespace TopLearn.Web.Pages.Admin.Users
 {
-    private IUserService _userService;
-
-    public DeleteUser(IUserService userService)
+    [PermissionChecker(5)]
+    public class DeleteUser : PageModel
     {
-        _userService = userService;
-    }
+        private IUserService _userService;
 
-    public InformationUserViewModel InformationUserViewModel { get; set; }
-    
-    public void OnGet(int id)
-    {
-        ViewData["UserId"] = id;
-        InformationUserViewModel = _userService.GetUserInformation(id);
-    }
+        public DeleteUser(IUserService userService)
+        {
+            _userService = userService;
+        }
 
-    public IActionResult OnPost(int UserId)
-    {
-        _userService.DeleteUser(UserId);
-        return RedirectToPage("Index");
+        public InformationUserViewModel InformationUserViewModel { get; set; }
+
+        public void OnGet(int id)
+        {
+            ViewData["UserId"] = id;
+            InformationUserViewModel = _userService.GetUserInformation(id);
+        }
+
+        public IActionResult OnPost(int UserId)
+        {
+            _userService.DeleteUser(UserId);
+            return RedirectToPage("Index");
+        }
     }
 }

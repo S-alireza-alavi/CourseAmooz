@@ -104,5 +104,24 @@ namespace TopLearn.Core.Services.Interfaces
             
             AddPermissionsToRole(roleId, permissions);
         }
+
+        public bool CheckUserPermission(int permissionId, string userName)
+        {
+            var userId = _context.Users.Single(u => u.UserName == userName).UserId;
+
+            List<int> userRoles = _context.UserRoles.Where(r => r.UserId == userId)
+                .Select(r => r.RoleId)
+                .ToList();
+
+            if (!userRoles.Any())
+                return false;
+
+            List<int> rolePermissions = _context.RolePermissions
+                .Where(p => p.PermissionId == permissionId)
+                .Select(p => p.RoleId)
+                .ToList();
+
+            return rolePermissions.Any(p => userRoles.Contains(p));
+        }
     }
 }

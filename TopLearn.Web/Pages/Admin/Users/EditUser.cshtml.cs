@@ -2,42 +2,44 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using TopLearn.Core.DTOs.User;
+using TopLearn.Core.Security;
 using TopLearn.Core.Services.Interfaces;
 
-namespace TopLearn.Web.Pages.Admin.Users;
-
-public class EditUserModel : PageModel
+namespace TopLearn.Web.Pages.Admin.Users
 {
-    private IUserService _userService;
-    private IPermissionService _permissionService;
-
-    public EditUserModel(IUserService userService, IPermissionService permissionService)
+    [PermissionChecker(4)]
+    public class EditUserModel : PageModel
     {
-        _userService = userService;
-        _permissionService = permissionService;
-    }
+        private IUserService _userService;
+        private IPermissionService _permissionService;
 
-    [BindProperty]
-    public EditUserViewModel EditUserViewModel { get; set; }
-    
-    public void OnGet(int id)
-    {
-        EditUserViewModel = _userService.GetUserForShowInEditMode(id);
-        ViewData["Roles"] = _permissionService.GetRoles();
-    }
-
-    public IActionResult OnPost(List<int> SelectedRoles)
-    {
-        if (!ModelState.IsValid)
+        public EditUserModel(IUserService userService, IPermissionService permissionService)
         {
-            return Page();
+            _userService = userService;
+            _permissionService = permissionService;
         }
-        
-        _userService.EditUserByAdmin(EditUserViewModel);
-        
-        //Edit roles
-        _permissionService.EditUserRoles(EditUserViewModel.UserId, SelectedRoles);
-        
-        return RedirectToPage("Index");
+
+        [BindProperty] public EditUserViewModel EditUserViewModel { get; set; }
+
+        public void OnGet(int id)
+        {
+            EditUserViewModel = _userService.GetUserForShowInEditMode(id);
+            ViewData["Roles"] = _permissionService.GetRoles();
+        }
+
+        public IActionResult OnPost(List<int> SelectedRoles)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+
+            _userService.EditUserByAdmin(EditUserViewModel);
+
+            //Edit roles
+            _permissionService.EditUserRoles(EditUserViewModel.UserId, SelectedRoles);
+
+            return RedirectToPage("Index");
+        }
     }
 }

@@ -1,39 +1,42 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using TopLearn.Core.Security;
 using TopLearn.Core.Services.Interfaces;
 using TopLearn.DataLayer.Entities.User;
 
-namespace TopLearn.Web.Pages.Admin.Roles;
-
-public class CreateRoleModel : PageModel
+namespace TopLearn.Web.Pages.Admin.Roles
 {
-    private IPermissionService _permissionService;
-
-    public CreateRoleModel(IPermissionService permissionService)
+    [PermissionChecker(7)]
+    public class CreateRoleModel : PageModel
     {
-        _permissionService = permissionService;
-    }
+        private IPermissionService _permissionService;
 
-    [BindProperty] public Role Role { get; set; }
-
-    public void OnGet()
-    {
-        ViewData["Permissions"] = _permissionService.GetAllPermissions();
-    }
-
-    public IActionResult OnPost(List<int> SelectedPermission)
-    {
-        if (!ModelState.IsValid)
+        public CreateRoleModel(IPermissionService permissionService)
         {
-            return Page();
+            _permissionService = permissionService;
         }
 
-        Role.IsDeleted = false;
-        int roleId = _permissionService.AddRole(Role);
-        
-        _permissionService.AddPermissionsToRole(roleId, SelectedPermission);
+        [BindProperty] public Role Role { get; set; }
 
-        return RedirectToPage("Index");
+        public void OnGet()
+        {
+            ViewData["Permissions"] = _permissionService.GetAllPermissions();
+        }
+
+        public IActionResult OnPost(List<int> SelectedPermission)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+
+            Role.IsDeleted = false;
+            int roleId = _permissionService.AddRole(Role);
+
+            _permissionService.AddPermissionsToRole(roleId, SelectedPermission);
+
+            return RedirectToPage("Index");
+        }
     }
 }
