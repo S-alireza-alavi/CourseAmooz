@@ -2,10 +2,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Collections.Generic;
 using TopLearn.Core.DTOs.User;
+using TopLearn.Core.Security;
 using TopLearn.Core.Services.Interfaces;
 
 namespace TopLearn.Web.Pages.Admin.Users
 {
+    [PermissionChecker(3)]
     public class CreateUserModel : PageModel
     {
         private IUserService _userService;
