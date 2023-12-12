@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 using TopLearn.Core.Convertors;
 using TopLearn.Core.DTOs.User;
 using TopLearn.Core.Generator;
@@ -93,6 +94,13 @@ namespace TopLearn.Core.Services
             return _context.Users.Single(u => u.UserName == userName).UserId;
         }
 
+        public void DeleteUser(int userId)
+        {
+            User user = GetUserById(userId);
+            user.IsDeleted = true;
+            UpdateUser(user);
+        }
+
         public InformationUserViewModel GetUserInformation(string username)
         {
             var user = GetUserByUserName(username);
@@ -103,7 +111,18 @@ namespace TopLearn.Core.Services
             information.Wallet = BalanceUserWallet(username);
 
             return information;
+        }
 
+        public InformationUserViewModel GetUserInformation(int userId)
+        {
+            var user = GetUserById(userId);
+            InformationUserViewModel information = new InformationUserViewModel();
+            information.UserName = user.UserName;
+            information.Email = user.Email;
+            information.RegisterDate = user.RegisterDate;
+            information.Wallet = BalanceUserWallet(user.UserName);
+
+            return information;
         }
 
         public SideBarUserPanelViewModel GetSideBarUserPanelData(string username)
@@ -239,6 +258,32 @@ namespace TopLearn.Core.Services
         public UsersForAdminViewModel GetUsers(int pageId = 1, string filterEmail = "", string filterUserName = "")
         {
             IQueryable<User> result = _context.Users;
+
+            if (!string.IsNullOrEmpty(filterEmail))
+            {
+                result = result.Where(u => u.Email.Contains(filterEmail));
+            }
+
+            if (!string.IsNullOrEmpty(filterUserName))
+            {
+                result = result.Where(u => u.UserName.Contains(filterUserName));
+            }
+
+            // Show Item in page
+            int take = 20;
+            int skip = (pageId - 1) * take;
+
+            UsersForAdminViewModel list = new UsersForAdminViewModel();
+            list.CurrentPage = pageId;
+            list.PageCount = result.Count() / take;
+            list.Users = result.OrderBy(u => u.RegisterDate).Skip(skip).Take(take).ToList();
+
+            return list;
+        }
+
+        public UsersForAdminViewModel GetDeletedUsers(int pageId = 1, string filterEmail = "", string filterUserName = "")
+        {
+            IQueryable<User> result = _context.Users.IgnoreQueryFilters().Where(u => u.IsDeleted);
 
             if (!string.IsNullOrEmpty(filterEmail))
             {
