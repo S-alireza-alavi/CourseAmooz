@@ -30,6 +30,9 @@ namespace TopLearn.DataLayer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleId"));
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("RoleTitle")
                         .IsRequired()
                         .HasMaxLength(200)

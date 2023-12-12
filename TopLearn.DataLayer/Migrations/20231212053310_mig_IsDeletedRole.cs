@@ -5,14 +5,14 @@
 namespace TopLearn.DataLayer.Migrations
 {
     /// <inheritdoc />
-    public partial class mig_IsDeletedUser : Migration
+    public partial class mig_IsDeletedRole : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<bool>(
                 name: "IsDeleted",
-                table: "Users",
+                table: "Roles",
                 type: "bit",
                 nullable: false,
                 defaultValue: false);
@@ -23,7 +23,7 @@ namespace TopLearn.DataLayer.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "IsDeleted",
-                table: "Users");
+                table: "Roles");
         }
     }
 }
