@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TopLearn.DataLayer.Context;
+using TopLearn.DataLayer.Entities.Permissions;
 using TopLearn.DataLayer.Entities.User;
 
 namespace TopLearn.Core.Services.Interfaces
@@ -68,6 +69,40 @@ namespace TopLearn.Core.Services.Interfaces
             
             //Add New Roles
             AddRolesToUser(rolesId, userId);
+        }
+
+        public List<Permission> GetAllPermissions()
+        {
+            return _context.Permissions.ToList();
+        }
+
+        public void AddPermissionsToRole(int roleId, List<int> permissions)
+        {
+            foreach (var p in permissions)
+            {
+                _context.RolePermissions.Add(new RolePermission()
+                {
+                    PermissionId = p,
+                    RoleId = roleId
+                });
+
+                _context.SaveChanges();
+            }
+        }
+
+        public List<int> RolePermissions(int roleId)
+        {
+            return _context.RolePermissions
+                .Where(r => r.RoleId == roleId)
+                .Select(r => r.PermissionId).ToList();
+        }
+
+        public void UpdateRolePermissions(int roleId, List<int> permissions)
+        {
+            _context.RolePermissions.Where(p => p.RoleId == roleId)
+                .ToList().ForEach(p => _context.RolePermissions.Remove(p));
+            
+            AddPermissionsToRole(roleId, permissions);
         }
     }
 }
