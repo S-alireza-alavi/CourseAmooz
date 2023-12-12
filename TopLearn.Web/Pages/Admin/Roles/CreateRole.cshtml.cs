@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using TopLearn.Core.Services.Interfaces;
 using TopLearn.DataLayer.Entities.User;
@@ -18,10 +19,10 @@ public class CreateRoleModel : PageModel
 
     public void OnGet()
     {
-        
+        ViewData["Permissions"] = _permissionService.GetAllPermissions();
     }
 
-    public IActionResult OnPost()
+    public IActionResult OnPost(List<int> SelectedPermission)
     {
         if (!ModelState.IsValid)
         {
@@ -31,7 +32,7 @@ public class CreateRoleModel : PageModel
         Role.IsDeleted = false;
         int roleId = _permissionService.AddRole(Role);
         
-        //TODO: Add permission
+        _permissionService.AddPermissionsToRole(roleId, SelectedPermission);
 
         return RedirectToPage("Index");
     }
