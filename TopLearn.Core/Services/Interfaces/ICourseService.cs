@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TopLearn.DataLayer.Entities.Course;
+﻿using System.Collections.Generic;
+using TopLearn.DataLayer.Entities.Courses;
 
 namespace TopLearn.Core.Services.Interfaces
 {

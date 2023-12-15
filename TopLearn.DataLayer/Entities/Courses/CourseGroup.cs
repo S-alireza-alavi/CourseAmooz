@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TopLearn.DataLayer.Entities.Course;
+namespace TopLearn.DataLayer.Entities.Courses;
 
 public class CourseGroup
 {
@@ -22,4 +22,10 @@ public class CourseGroup
 
     [ForeignKey("ParentId")]
     public List<CourseGroup> CourseGroups { get; set; }
+
+    [InverseProperty("CourseGroup")]
+    public List<Course> Courses { get; set; }
+    
+    [InverseProperty("Group")]
+    public List<Course> SubGroup { get; set; }
 }
