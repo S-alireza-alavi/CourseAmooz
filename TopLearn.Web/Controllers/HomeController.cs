@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using TopLearn.Core.Services.Interfaces;
 
 namespace TopLearn.Web.Controllers
@@ -12,10 +8,12 @@ namespace TopLearn.Web.Controllers
     public class HomeController : Controller
     {
         private IUserService _userService;
+        private ICourseService _courseService;
 
-        public HomeController(IUserService userService)
+        public HomeController(IUserService userService, ICourseService courseService)
         {
             _userService = userService;
+            _courseService = courseService;
         }
 
         public IActionResult Index() => View();
@@ -46,6 +44,16 @@ namespace TopLearn.Web.Controllers
             }
 
             return View();
+        }
+        
+        public IActionResult GetSubGroups(int id)
+        {
+            List<SelectListItem> list = new List<SelectListItem>()
+            {
+                new SelectListItem() { Text = "انتخاب کنید", Value = "0" }
+            };
+            list.AddRange(_courseService.GetSubGroupForManageCourse(id));
+            return Json(new SelectList(list, "Value", "Text"));
         }
     }
 }
