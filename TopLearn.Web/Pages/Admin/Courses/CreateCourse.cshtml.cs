@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -35,5 +36,15 @@ public class CreateCourse : PageModel
         
         var statuses = _courseService.GetStatuses();
         ViewData["Statuses"] = new SelectList(statuses, "Value", "Text");
+    }
+
+    public IActionResult OnPost(IFormFile imgCourseUp, IFormFile demoUp)
+    {
+        if (!ModelState.IsValid)
+            return Page();
+
+        _courseService.AddCourse(Course, imgCourseUp, demoUp);
+
+        return RedirectToPage("Index");
     }
 }

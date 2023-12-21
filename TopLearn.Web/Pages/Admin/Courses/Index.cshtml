@@ -1,5 +1,5 @@
 ﻿@page
-@model TopLearn.Web.Pages.Admin.Courses.Index
+@model TopLearn.Web.Pages.Admin.Courses.IndexModel
 
 @{
     ViewData["Title"] = "لیست دوره ها";
@@ -23,6 +23,32 @@
                 <div class="col-md-12" style="margin: 10px 0">
                     <a asp-page="CreateCourse" class="btn btn-outline btn-success">افزودن دوره جدید</a>
                 </div>
+                <table class="table table-striped table-bordered table-hover dataTable no-footer" id="dataTables-example" aria-describedby="dataTables-example_info">
+                    <thead>
+                        <tr>
+                            <th>تصویر</th>
+                            <th>عنوان دوره</th>
+                            <th>تعداد جلسات</th>
+                            <th>دستورات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.CoursesList)
+                        {
+                            <tr>
+                                <td>
+                                    <img src="/course/image/@item.ImageName" class="thumbnail" style="max-width: 120px"/>
+                                </td>
+                                <td>
+                                    @item.Title
+                                </td>
+                                <td>
+                                    @item.EpisodeCount
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
             <!-- /.panel-body -->
         </div>

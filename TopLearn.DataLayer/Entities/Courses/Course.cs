@@ -62,8 +62,10 @@ public class Course
     [ForeignKey("SubGroup")]
     public CourseGroup Group { get; set; }
 
+    [ForeignKey("StatusId")]
     public CourseStatus CourseStatus { get; set; }
 
+    [ForeignKey("LevelId")]
     public CourseLevel CourseLevel { get; set; }
 
     public List<CourseEpisode> CourseEpisodes { get; set; }
