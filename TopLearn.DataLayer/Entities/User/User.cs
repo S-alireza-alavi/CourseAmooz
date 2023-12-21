@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using TopLearn.DataLayer.Entities.Courses;
 
 namespace TopLearn.DataLayer.Entities.User
 {
@@ -51,6 +52,7 @@ namespace TopLearn.DataLayer.Entities.User
 
         public virtual List<UserRole> UserRoles { get; set; }
         public virtual List<Wallet.Wallet> Wallets { get; set; }
+        public virtual List<Course> Courses { get; set; }
 
         #endregion
     }
