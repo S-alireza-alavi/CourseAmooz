@@ -37,13 +37,18 @@
                         {
                             <tr>
                                 <td>
-                                    <img src="/course/image/@item.ImageName" class="thumbnail" style="max-width: 120px"/>
+                                    <img src="/course/thumb/@item.ImageName" class="thumbnail"/>
                                 </td>
                                 <td>
                                     @item.Title
                                 </td>
                                 <td>
                                     @item.EpisodeCount
+                                </td>
+                                <td>
+                                    <a asp-page="EditCourse" asp-route-id="@item.CourseId" class="btn btn-warning btn-sm">
+                                        ویرایش
+                                    </a>
                                 </td>
                             </tr>
                         }

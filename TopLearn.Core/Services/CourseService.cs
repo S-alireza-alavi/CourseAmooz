@@ -5,8 +5,10 @@ using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using TopLearn.Core.Convertors;
 using TopLearn.Core.DTOs.Course;
 using TopLearn.Core.Generator;
+using TopLearn.Core.Security;
 using TopLearn.Core.Services.Interfaces;
 using TopLearn.DataLayer.Context;
 using TopLearn.DataLayer.Entities.Courses;
@@ -102,14 +104,90 @@ namespace TopLearn.Core.Services
                 {
                     imgCourse.CopyTo(stream);
                 }
+
+                var imgResizer = new ImageConvertor();
+                string thumbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/thumb", course.CourseImageName);
+
+                imgResizer.Image_resize(imagePath, thumbPath, 150);
             }
 
-            //TODO: Upload demo
+            if (courseDemo != null && imgCourse.IsImage())
+            {
+                course.DemoFileName = NameGenerator.GenerateUniqCode() + Path.GetExtension(courseDemo.FileName);
+                string demoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/demos", course.DemoFileName);
+                
+                using (var stream = new FileStream(demoPath, FileMode.Create))
+                {
+                    courseDemo.CopyTo(stream);
+                }
+            }
 
             _context.Courses.Add(course);
             _context.SaveChanges();
 
             return course.CourseId;
+        }
+
+        public Course GetCourseById(int courseId)
+        {
+            return _context.Courses.Find(courseId);
+        }
+
+        public void UpdateCourse(Course course, IFormFile imgCourse, IFormFile courseDemo)
+        {
+            course.UpdateDate = DateTime.Now;
+            
+            if (imgCourse != null)
+            {
+                if (course.CourseImageName != "no-photo.jpg")
+                {
+                    string deleteImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/image", course.CourseImageName);
+                    if (File.Exists(deleteImagePath))
+                    {
+                        File.Delete(deleteImagePath);
+                    }
+                    
+                    string deleteThumbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/thumb", course.CourseImageName);
+                    if (File.Exists(deleteThumbPath))
+                    {
+                        File.Delete(deleteThumbPath);
+                    }
+                }
+                course.CourseImageName = NameGenerator.GenerateUniqCode() + Path.GetExtension(imgCourse.FileName);
+                string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/image", course.CourseImageName);
+
+                using (var stream = new FileStream(imagePath, FileMode.Create))
+                {
+                    imgCourse.CopyTo(stream);
+                }
+
+                var imgResizer = new ImageConvertor();
+                string thumbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/thumb", course.CourseImageName);
+
+                imgResizer.Image_resize(imagePath, thumbPath, 150);
+            }
+
+            if (courseDemo != null && imgCourse.IsImage())
+            {
+                if (course.DemoFileName != null)
+                {
+                    string deleteDemoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/demos", course.DemoFileName);
+                    if (File.Exists(deleteDemoPath))
+                    {
+                        File.Delete(deleteDemoPath);
+                    }
+                }
+                course.DemoFileName = NameGenerator.GenerateUniqCode() + Path.GetExtension(courseDemo.FileName);
+                string demoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/demos", course.DemoFileName);
+                
+                using (var stream = new FileStream(demoPath, FileMode.Create))
+                {
+                    courseDemo.CopyTo(stream);
+                }
+            }
+
+            _context.Courses.Update(course);
+            _context.SaveChanges();
         }
     }
 }

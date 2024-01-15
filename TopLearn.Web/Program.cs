@@ -9,6 +9,7 @@ using System;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace TopLearn.Web
 {
@@ -17,6 +18,11 @@ namespace TopLearn.Web
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            //builder.Services.Configure<FormOptions>(options =>
+            //{
+            //    options.MultipartBodyLengthLimit = 6000000;
+            //});
 
             #region DBContext
 
