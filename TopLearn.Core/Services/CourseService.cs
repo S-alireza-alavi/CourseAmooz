@@ -189,5 +189,55 @@ namespace TopLearn.Core.Services
             _context.Courses.Update(course);
             _context.SaveChanges();
         }
+
+        public List<CourseEpisode> GetListEpisodeCourse(int courseId)
+        {
+            return _context.CourseEpisodes.Where(e => e.CourseId == courseId).ToList();
+        }
+
+        public bool CheckExistFile(string fileName)
+        {
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles", fileName);
+            return File.Exists(path);
+        }
+
+        public int AddEpisode(CourseEpisode episode, IFormFile episodeFile)
+        {
+            episode.EpisodeFileName = episodeFile.FileName;
+            
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles", episode.EpisodeFileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                episodeFile.CopyTo(stream);
+            }
+            
+            _context.CourseEpisodes.Add(episode);
+            _context.SaveChanges();
+            return episode.EpisodeId;
+        }
+
+        public CourseEpisode GetEpisodeById(int episodeId)
+        {
+            return _context.CourseEpisodes.Find(episodeId);
+        }
+
+        public void EditEpisode(CourseEpisode episode, IFormFile episodeFile)
+        {
+            if (episodeFile != null)
+            {
+                var deleteFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles", episode.EpisodeFileName);
+                File.Delete(deleteFilePath);
+
+                episode.EpisodeFileName = episodeFile.FileName;
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles", episode.EpisodeFileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    episodeFile.CopyTo(stream);
+                }
+            }
+
+            _context.CourseEpisodes.Update(episode);
+            _context.SaveChanges();
+        }
     }
 }
