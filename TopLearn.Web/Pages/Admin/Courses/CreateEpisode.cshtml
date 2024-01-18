@@ -1,6 +1,5 @@
-﻿@page
+﻿@page "{id}"
 @model TopLearn.Web.Pages.Admin.Courses.CreateEpisodeModel
-
 @{
     ViewData["Title"] = "بخش جدید";
 }
@@ -12,23 +11,23 @@
             <h2>اطلاعات دوره</h2>
             <hr/>
             <div class="form-group">
-                <label>عنوان قسمت</label>
-                <input type="text" asp-for="CourseEpisode.EpisodeTitle" class="form-control"/>
+                <label>عنوان بخش</label>
+                <input type="text" asp-for="CourseEpisode.EpisodeTitle" class="form-control">
                 <span asp-validation-for="CourseEpisode.EpisodeTitle"></span>
             </div>
             <div class="form-group">
-                <label>زمان قسمت</label>
-                <input type="text" asp-for="CourseEpisode.EpisodeTime" class="form-control"/>
+                <label>زمان بخش</label>
+                <input type="text" asp-for="CourseEpisode.EpisodeTime" class="form-control">
                 <span asp-validation-for="CourseEpisode.EpisodeTime"></span>
             </div>
             <div class="form-group">
-                <label>فایل قسمت</label>
-                <input type="file" name="fileEpisode"/>
+                <label>فایل بخش</label>
+                <input type="file" name="fileEpisode">
                 <p class="text-danger">فایل اجباری است</p>
                 @if (ViewData["IsExistFile"] != null)
                 {
-                    <div class="alert-danger">
-                        نام فایل معتبر نیست. لطفا تغییر دهید
+                    <div class="alert alert-danger">
+                        نام فایل معتبر نیست ، لطفا تغییر دهید
                     </div>
                 }
                 <span asp-validation-for="CourseEpisode.EpisodeFileName"></span>
@@ -37,8 +36,8 @@
                 <label>دسترسی</label>
                 <div class="checkbox">
                     <label>
-                        <input type="checkbox" asp-for="CourseEpisode.IsFree"/>
-                        رایگان
+                        <input type="checkbox" asp-for="CourseEpisode.IsFree">
+                        رایگان است
                     </label>
                 </div>
                 <input type="submit" value="ذخیره اطلاعات" class="btn btn-success"/>
@@ -46,3 +45,4 @@
         </div>
     </form>
 </div>
+

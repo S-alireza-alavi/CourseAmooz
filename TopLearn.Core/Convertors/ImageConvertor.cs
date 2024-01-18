@@ -1,14 +1,17 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Text;
 
-namespace TopLearn.Core.Convertors;
-
-public class ImageConvertor
+namespace TopLearn.Core.Convertors
 {
-    public void Image_resize(string input_Image_Path, string output_Image_Path, int new_Width)
+    public class ImageConvertor
+    {
+        public void Image_resize(string input_Image_Path, string output_Image_Path, int new_Width)
         {
 
             const long quality = 50L;
@@ -104,4 +107,5 @@ public class ImageConvertor
             //---------------</ Image_resize() >---------------
 
         }
+    }
 }

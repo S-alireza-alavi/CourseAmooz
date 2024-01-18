@@ -1,7 +1,6 @@
-﻿@page
+﻿@page "{id}"
 @using TopLearn.Core.Convertors
-@model TopLearn.Web.Pages.Admin.Users.DeleteUser
-
+@model TopLearn.Web.Pages.Admin.Users.DeleteUserModel
 @{
     ViewData["Title"] = "حذف کاربر";
 }
@@ -16,13 +15,13 @@
                 <input type="hidden" name="UserId" value="@ViewData["UserId"].ToString()"/>
                 
                 <dl class="dl-horizontal">
-                    <dt>نام کاربری: </dt>
+                    <dt>نام کاربری : </dt>
                     <dd>@Model.InformationUserViewModel.UserName</dd>
-                    <dt>ایمیل: </dt>
+                    <dt>ایمیل : </dt>
                     <dd>@Model.InformationUserViewModel.Email</dd>
-                    <dt>موجودی کیف پول: </dt>
+                    <dt>موجودی کیف پول  : </dt>
                     <dd>@Model.InformationUserViewModel.Wallet</dd>
-                    <dt>تاریخ عضویت: </dt>
+                    <dt>تاریخ عضویت : </dt>
                     <dd>@Model.InformationUserViewModel.RegisterDate.ToShamsi()</dd>
                     <dt></dt>
                     <dd>
@@ -35,3 +34,5 @@
     </div>
     <!-- /.panel -->
 </div>
+
+

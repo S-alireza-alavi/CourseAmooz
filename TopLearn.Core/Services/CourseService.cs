@@ -12,7 +12,6 @@ using TopLearn.Core.Security;
 using TopLearn.Core.Services.Interfaces;
 using TopLearn.DataLayer.Context;
 using TopLearn.DataLayer.Entities.Courses;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TopLearn.Core.Services
 {
@@ -25,7 +24,7 @@ namespace TopLearn.Core.Services
             _context = context;
         }
 
-        public List<CourseGroup> GetAllGroups()
+        public List<CourseGroup> GetAllGroup()
         {
             return _context.CourseGroups.ToList();
         }
@@ -52,8 +51,7 @@ namespace TopLearn.Core.Services
 
         public List<SelectListItem> GetTeachers()
         {
-            return _context.UserRoles.Where(r => r.RoleId == 2)
-                .Include(r => r.User)
+            return _context.UserRoles.Where(r => r.RoleId == 2).Include(r => r.User)
                 .Select(u => new SelectListItem()
                 {
                     Value = u.UserId.ToString(),
@@ -68,11 +66,12 @@ namespace TopLearn.Core.Services
                 Value = l.LevelId.ToString(),
                 Text = l.LevelTitle
             }).ToList();
+
         }
 
-        public List<SelectListItem> GetStatuses()
+        public List<SelectListItem> GetStatues()
         {
-            return _context.CourseStatus.Select(s => new SelectListItem()
+            return _context.CourseStatuses.Select(s => new SelectListItem()
             {
                 Value = s.StatusId.ToString(),
                 Text = s.StatusTitle
@@ -94,35 +93,37 @@ namespace TopLearn.Core.Services
         {
             course.CreateDate = DateTime.Now;
             course.CourseImageName = "no-photo.jpg";
-            //TODO: Check image
-            if (imgCourse != null)
+            //TODO Check Image
+            if (imgCourse != null && imgCourse.IsImage())
             {
                 course.CourseImageName = NameGenerator.GenerateUniqCode() + Path.GetExtension(imgCourse.FileName);
-                string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/image", course.CourseImageName);
+                string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/image",
+                    course.CourseImageName);
 
                 using (var stream = new FileStream(imagePath, FileMode.Create))
                 {
                     imgCourse.CopyTo(stream);
                 }
 
-                var imgResizer = new ImageConvertor();
-                string thumbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/thumb", course.CourseImageName);
+                ImageConvertor imgResizer = new ImageConvertor();
+                string thumbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/thumb",
+                    course.CourseImageName);
 
                 imgResizer.Image_resize(imagePath, thumbPath, 150);
             }
 
-            if (courseDemo != null && imgCourse.IsImage())
+            if (courseDemo != null)
             {
                 course.DemoFileName = NameGenerator.GenerateUniqCode() + Path.GetExtension(courseDemo.FileName);
-                string demoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/demos", course.DemoFileName);
-                
+                string demoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/demoes",
+                    course.DemoFileName);
                 using (var stream = new FileStream(demoPath, FileMode.Create))
                 {
                     courseDemo.CopyTo(stream);
                 }
             }
 
-            _context.Courses.Add(course);
+            _context.Add(course);
             _context.SaveChanges();
 
             return course.CourseId;
@@ -136,50 +137,57 @@ namespace TopLearn.Core.Services
         public void UpdateCourse(Course course, IFormFile imgCourse, IFormFile courseDemo)
         {
             course.UpdateDate = DateTime.Now;
-            
-            if (imgCourse != null)
+
+            if (imgCourse != null && imgCourse.IsImage())
             {
                 if (course.CourseImageName != "no-photo.jpg")
                 {
-                    string deleteImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/image", course.CourseImageName);
-                    if (File.Exists(deleteImagePath))
+                    string deleteimagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/image",
+                        course.CourseImageName);
+                    if (File.Exists(deleteimagePath))
                     {
-                        File.Delete(deleteImagePath);
+                        File.Delete(deleteimagePath);
                     }
-                    
-                    string deleteThumbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/thumb", course.CourseImageName);
-                    if (File.Exists(deleteThumbPath))
+
+                    string deletethumbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/thumb",
+                        course.CourseImageName);
+                    if (File.Exists(deletethumbPath))
                     {
-                        File.Delete(deleteThumbPath);
+                        File.Delete(deletethumbPath);
                     }
                 }
+
                 course.CourseImageName = NameGenerator.GenerateUniqCode() + Path.GetExtension(imgCourse.FileName);
-                string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/image", course.CourseImageName);
+                string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/image",
+                    course.CourseImageName);
 
                 using (var stream = new FileStream(imagePath, FileMode.Create))
                 {
                     imgCourse.CopyTo(stream);
                 }
 
-                var imgResizer = new ImageConvertor();
-                string thumbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/thumb", course.CourseImageName);
+                ImageConvertor imgResizer = new ImageConvertor();
+                string thumbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/thumb",
+                    course.CourseImageName);
 
                 imgResizer.Image_resize(imagePath, thumbPath, 150);
             }
 
-            if (courseDemo != null && imgCourse.IsImage())
+            if (courseDemo != null)
             {
                 if (course.DemoFileName != null)
                 {
-                    string deleteDemoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/demos", course.DemoFileName);
+                    string deleteDemoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/demoes",
+                        course.DemoFileName);
                     if (File.Exists(deleteDemoPath))
                     {
                         File.Delete(deleteDemoPath);
                     }
                 }
+
                 course.DemoFileName = NameGenerator.GenerateUniqCode() + Path.GetExtension(courseDemo.FileName);
-                string demoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/demos", course.DemoFileName);
-                
+                string demoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/demoes",
+                    course.DemoFileName);
                 using (var stream = new FileStream(demoPath, FileMode.Create))
                 {
                     courseDemo.CopyTo(stream);
@@ -190,27 +198,215 @@ namespace TopLearn.Core.Services
             _context.SaveChanges();
         }
 
-        public List<CourseEpisode> GetListEpisodeCourse(int courseId)
+        //public Tuple<List<ShowCourseListItemViewModel>, int> GetCourse(int pageId = 1, string filter = ""
+        //    , string getType = "all", string orderByType = "date",
+        //    int startPrice = 0, int endPrice = 0, List<int> selectedGroups = null, int take = 0)
+        //{
+        //    if (take == 0)
+        //        take = 8;
+
+        //    IQueryable<Course> result = _context.Courses;
+
+        //    if (!string.IsNullOrEmpty(filter))
+        //    {
+        //        result = result.Where(c => c.CourseTitle.Contains(filter) || c.Tags.Contains(filter));
+        //    }
+
+        //    switch (getType)
+        //    {
+        //        case "all":
+        //            break;
+        //        case "buy":
+        //            {
+        //                result = result.Where(c => c.CoursePrice != 0);
+        //                break;
+        //            }
+        //        case "free":
+        //            {
+        //                result = result.Where(c => c.CoursePrice == 0);
+        //                break;
+        //            }
+
+        //    }
+
+        //    switch (orderByType)
+        //    {
+        //        case "date":
+        //            {
+        //                result = result.OrderByDescending(c => c.CreateDate);
+        //                break;
+        //            }
+        //        case "updatedate":
+        //            {
+        //                result = result.OrderByDescending(c => c.UpdateDate);
+        //                break;
+        //            }
+        //    }
+
+        //    if (startPrice > 0)
+        //    {
+        //        result = result.Where(c => c.CoursePrice > startPrice);
+        //    }
+
+        //    if (endPrice > 0)
+        //    {
+        //        result = result.Where(c => c.CoursePrice < startPrice);
+        //    }
+
+
+        //    if (selectedGroups != null && selectedGroups.Any())
+        //    {
+        //        foreach (int groupId in selectedGroups)
+        //        {
+        //            result = result.Where(c => c.GroupId == groupId || c.SubGroup == groupId);
+        //        }
+
+        //    }
+
+        //    int skip = (pageId - 1) * take;
+
+        //    int pageCount = result.Include(c => c.CourseEpisodes).Select(c => new ShowCourseListItemViewModel()
+        //    {
+        //        CourseId = c.CourseId,
+        //        ImageName = c.CourseImageName,
+        //        Price = c.CoursePrice,
+        //        Title = c.CourseTitle,
+        //        TotalTime = new TimeSpan(c.CourseEpisodes.Sum(e => e.EpisodeTime.Ticks))
+        //    }).Count() / take;
+
+        //    var courses = result.Include(c => c.CourseEpisodes).AsEnumerable();
+
+        //    var query = result.Include(c => c.CourseEpisodes).Select(c => new ShowCourseListItemViewModel()
+        //    {
+        //        CourseId = c.CourseId,
+        //        ImageName = c.CourseImageName,
+        //        Price = c.CoursePrice,
+        //        Title = c.CourseTitle,
+        //        TotalTime = new TimeSpan(c.CourseEpisodes.Sum(e => e.EpisodeTime.Ticks))
+        //    }).Skip(skip).Take(take).ToList();
+
+        //    return Tuple.Create(query, pageCount);
+        //}
+
+        public Tuple<List<ShowCourseListItemViewModel>, int> GetCourse(int pageId = 1, string filter = "",
+            string getType = "all", string orderByType = "date", int startPrice = 0, int endPrice = 0,
+            List<int> selectedGroups = null, int take = 0)
+        {
+            if (take == 0)
+                take = 8;
+
+            IQueryable<Course> result = _context.Courses;
+
+            if (!string.IsNullOrEmpty(filter))
+            {
+                result = result.Where(
+                    c => c.CourseTitle.Contains(filter) || c.Tags.Contains(filter) || c.Tags.Contains(filter));
+            }
+
+            switch (getType)
+            {
+                case "all":
+                    break;
+                case "buy":
+                {
+                    result = result.Where(c => c.CoursePrice != 0);
+                    break;
+                }
+                case "free":
+                {
+                    result = result.Where(c => c.CoursePrice == 0);
+                    break;
+                }
+            }
+
+            switch (orderByType)
+            {
+                case "date":
+                {
+                    result = result.OrderByDescending(c => c.CreateDate);
+                    break;
+                }
+                case "updatedate":
+                {
+                    result = result.OrderByDescending(c => c.UpdateDate);
+                    break;
+                }
+            }
+
+            if (startPrice > 0)
+            {
+                result = result.Where(c => c.CoursePrice > startPrice);
+            }
+
+            if (endPrice > 0)
+            {
+                result = result.Where(c => c.CoursePrice < startPrice);
+            }
+
+            if (selectedGroups != null && selectedGroups.Any())
+            {
+                foreach (int groupId in selectedGroups)
+                {
+                    result = result.Where(c => c.GroupId == groupId || c.SubGroup == groupId);
+                }
+            }
+
+            int skip = (pageId - 1) * take;
+
+            var courses = result.Include(c => c.CourseEpisodes).AsEnumerable();
+
+            int pageCount = courses.Select(c => new ShowCourseListItemViewModel()
+            {
+                CourseId = c.CourseId,
+                ImageName = c.CourseImageName,
+                Price = c.CoursePrice,
+                Title = c.CourseTitle,
+                TotalTime = new TimeSpan(c.CourseEpisodes.Sum(e => e.EpisodeTime.Ticks))
+            }).Count() / take;
+
+            var query = courses.Select(c => new ShowCourseListItemViewModel()
+            {
+                CourseId = c.CourseId,
+                ImageName = c.CourseImageName,
+                Price = c.CoursePrice,
+                Title = c.CourseTitle,
+                TotalTime = new TimeSpan(c.CourseEpisodes.Sum(e => e.EpisodeTime.Ticks))
+            }).Skip(skip).Take(take).ToList();
+
+            return Tuple.Create(query, pageCount);
+        }
+
+
+        public Course GetCourseForShow(int courseId)
+        {
+            return _context.Courses.Include(c => c.CourseEpisodes)
+                .Include(c => c.CourseStatus).Include(c => c.CourseLevel)
+                .Include(c => c.User)
+                .FirstOrDefault(c => c.CourseId == courseId);
+        }
+
+        public List<CourseEpisode> GetListEpisodeCorse(int courseId)
         {
             return _context.CourseEpisodes.Where(e => e.CourseId == courseId).ToList();
         }
 
         public bool CheckExistFile(string fileName)
         {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles", fileName);
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles", fileName);
             return File.Exists(path);
         }
 
         public int AddEpisode(CourseEpisode episode, IFormFile episodeFile)
         {
             episode.EpisodeFileName = episodeFile.FileName;
-            
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles", episode.EpisodeFileName);
+
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles",
+                episode.EpisodeFileName);
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 episodeFile.CopyTo(stream);
             }
-            
+
             _context.CourseEpisodes.Add(episode);
             _context.SaveChanges();
             return episode.EpisodeId;
@@ -225,11 +421,13 @@ namespace TopLearn.Core.Services
         {
             if (episodeFile != null)
             {
-                var deleteFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles", episode.EpisodeFileName);
+                string deleteFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles",
+                    episode.EpisodeFileName);
                 File.Delete(deleteFilePath);
 
                 episode.EpisodeFileName = episodeFile.FileName;
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles", episode.EpisodeFileName);
+                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles",
+                    episode.EpisodeFileName);
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     episodeFile.CopyTo(stream);

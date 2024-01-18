@@ -6,13 +6,14 @@ using TopLearn.DataLayer.Entities.Wallet;
 
 namespace TopLearn.DataLayer.Context
 {
-    public class TopLearnContext : DbContext
+    public class TopLearnContext:DbContext
     {
 
-        public TopLearnContext(DbContextOptions<TopLearnContext> options) : base(options)
+        public TopLearnContext(DbContextOptions<TopLearnContext> options):base(options)
         {
-
+            
         }
+
 
         #region User
 
@@ -32,8 +33,8 @@ namespace TopLearn.DataLayer.Context
 
         #region Permission
 
-        public DbSet<Permission> Permissions { get; set; }
-        public DbSet<RolePermission> RolePermissions { get; set; }
+        public DbSet<Permission> Permission { get; set; }
+        public DbSet<RolePermission> RolePermission { get; set; }
 
         #endregion
 
@@ -41,9 +42,10 @@ namespace TopLearn.DataLayer.Context
 
         public DbSet<CourseGroup> CourseGroups { get; set; }
         public DbSet<CourseLevel> CourseLevels { get; set; }
-        public DbSet<CourseStatus> CourseStatus { get; set; }
+        public DbSet<CourseStatus> CourseStatuses { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<CourseEpisode> CourseEpisodes { get; set; }
+
 
         #endregion
 
@@ -56,7 +58,9 @@ namespace TopLearn.DataLayer.Context
                 .HasQueryFilter(r => !r.IsDeleted);
 
             modelBuilder.Entity<CourseGroup>()
-            .HasQueryFilter(cg => !cg.IsDeleted);
+                .HasQueryFilter(g => !g.IsDeleted);
+
+
 
             base.OnModelCreating(modelBuilder);
         }

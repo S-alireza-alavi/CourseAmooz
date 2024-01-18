@@ -10,7 +10,7 @@ namespace TopLearn.DataLayer.Entities.User
     {
         public User()
         {
-            
+
         }
 
         [Key]
@@ -47,7 +47,7 @@ namespace TopLearn.DataLayer.Entities.User
         public DateTime RegisterDate { get; set; }
 
         public bool IsDeleted { get; set; }
-        
+
         #region Relations
 
         public virtual List<UserRole> UserRoles { get; set; }

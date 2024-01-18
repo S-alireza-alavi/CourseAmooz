@@ -1,6 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Http
-@using TopLearn.Core.DTOs.User
-@model LoginViewModel
+@model TopLearn.Core.DTOs.LoginViewModel
 @{
     ViewData["Title"] = "ورود به سایت";
 }
@@ -23,7 +22,7 @@
             <script>
                 // Your delay in milliseconds
                 var delay = 3000; 
-                setTimeout(function () { window.location = "https://localhost:5000/UserPanel"; }, delay);
+                setTimeout(function () { window.location = "/UserPanel"; }, delay);
             </script>
         }
         

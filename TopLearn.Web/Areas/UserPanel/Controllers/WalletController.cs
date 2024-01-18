@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TopLearn.Core.DTOs.User;
+using TopLearn.Core.DTOs;
 using TopLearn.Core.Services.Interfaces;
 
 namespace TopLearn.Web.Areas.UserPanel.Controllers
@@ -45,7 +45,7 @@ namespace TopLearn.Web.Areas.UserPanel.Controllers
 
             var payment = new ZarinpalSandbox.Payment(charge.Amount);
 
-            var res =  payment.PaymentRequest("شارژ کیف پول", "https://localhost:5000/OnlinePayment/" + walletId,"Info@topLearn.Com","09197070750");
+            var res =  payment.PaymentRequest("شارژ کیف پول", "/OnlinePayment/" + walletId,"Info@topLearn.Com","09197070750");
 
             if (res.Result.Status == 100)
             {
