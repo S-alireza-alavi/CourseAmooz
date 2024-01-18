@@ -9,7 +9,7 @@ namespace TopLearn.DataLayer.Entities.User
     {
         public UserRole()
         {
-            
+
         }
 
         [Key]

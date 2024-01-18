@@ -7,7 +7,7 @@ public class CourseLevel
 {
     [Key]
     public int LevelId { get; set; }
-    
+
     [Required()]
     [MaxLength(150)]
     public string LevelTitle { get; set; }

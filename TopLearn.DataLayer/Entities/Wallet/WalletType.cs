@@ -10,10 +10,10 @@ namespace TopLearn.DataLayer.Entities.Wallet
     {
         public WalletType()
         {
-            
+
         }
 
-        [Key,DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int TypeId { get; set; }
 
         [Required]

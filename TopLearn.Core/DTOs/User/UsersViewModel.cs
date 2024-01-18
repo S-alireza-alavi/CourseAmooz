@@ -1,19 +1,18 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using TopLearn.DataLayer.Entities.User;
 
-namespace TopLearn.Core.DTOs.User
+namespace TopLearn.Core.DTOs
 {
-    public class UsersForAdminViewModel
+    public class UserForAdminViewModel
     {
-        public List<TopLearn.DataLayer.Entities.User.User> Users { get; set; }
+        public List<User> Users { get; set; }
         public int CurrentPage { get; set; }
         public int PageCount { get; set; }
+
     }
 
     public class CreateUserViewModel
@@ -36,7 +35,6 @@ namespace TopLearn.Core.DTOs.User
 
         public IFormFile UserAvatar { get; set; }
 
-        //public List<int> SelectedRoles { get; set; }
     }
 
     public class EditUserViewModel

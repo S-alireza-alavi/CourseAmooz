@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using TopLearn.DataLayer.Entities.Permissions;
 using TopLearn.DataLayer.Entities.User;
 
@@ -18,17 +16,18 @@ namespace TopLearn.Core.Services.Interfaces
         void UpdateRole(Role role);
         void DeleteRole(Role role);
         void AddRolesToUser(List<int> roleIds, int userId);
-        void EditUserRoles(int userId, List<int> rolesId);
+        void EditRolesUser(int userId, List<int> rolesId);
 
         #endregion
 
-        #region MyRegion
+        #region Permission
 
-        List<Permission> GetAllPermissions();
-        void AddPermissionsToRole(int roleId, List<int> permissions);
-        List<int> RolePermissions(int roleId);
-        void UpdateRolePermissions(int roleId, List<int> permissions);
-        bool CheckUserPermission(int permissionId, string userName);
+        List<Permission> GetAllPermission();
+        void AddPermissionsToRole(int roleId, List<int> permission);
+        List<int> PermissionsRole(int roleId);
+        void UpdatePermissionsRole(int roleId, List<int> permissions);
+
+        bool CheckPermission(int permissionId, string userName);
 
         #endregion
     }

@@ -7,7 +7,7 @@ using TopLearn.DataLayer.Entities.User;
 
 namespace TopLearn.Web.Pages.Admin.Roles
 {
-    [PermissionChecker(7)]
+    [PermissionChecker(1003)]
     public class CreateRoleModel : PageModel
     {
         private IPermissionService _permissionService;
@@ -17,24 +17,25 @@ namespace TopLearn.Web.Pages.Admin.Roles
             _permissionService = permissionService;
         }
 
-        [BindProperty] public Role Role { get; set; }
+        
+        [BindProperty]
+        public Role Role { get; set; }
 
         public void OnGet()
         {
-            ViewData["Permissions"] = _permissionService.GetAllPermissions();
+            ViewData["Permissions"] = _permissionService.GetAllPermission();
         }
 
         public IActionResult OnPost(List<int> SelectedPermission)
         {
             if (!ModelState.IsValid)
-            {
                 return Page();
-            }
 
+           
             Role.IsDeleted = false;
             int roleId = _permissionService.AddRole(Role);
 
-            _permissionService.AddPermissionsToRole(roleId, SelectedPermission);
+            _permissionService.AddPermissionsToRole(roleId,SelectedPermission);
 
             return RedirectToPage("Index");
         }

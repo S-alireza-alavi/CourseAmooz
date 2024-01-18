@@ -20,7 +20,7 @@ public class Course
 
     [Required]
     public int StatusId { get; set; }
-    
+
     [Required]
     public int LevelId { get; set; }
 

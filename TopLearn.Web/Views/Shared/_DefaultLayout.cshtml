@@ -51,8 +51,8 @@
     </div>
 
     <!-- main manu -->
-    @await Component.InvokeAsync("CourseGroupComponent")
-    <!-- /main manu -->
+@await Component.InvokeAsync("CourseGroupComponent")
+<!-- /main manu -->
     <!-- content -->
     @RenderBody()
     <!-- /content -->
@@ -63,7 +63,8 @@
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/script.js"></script>
     <script src="/js/jquery.validate.min.js"></script>
-    <script src="/js/jquery.validate.unobtrusive.js"></script>
+<script src="/js/jquery.validate.unobtrusive.js"></script>
+@RenderSection("Scripts",false)
 
 </body>
 </html>

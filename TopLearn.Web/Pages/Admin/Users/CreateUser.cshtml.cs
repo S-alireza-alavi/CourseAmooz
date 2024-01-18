@@ -1,7 +1,10 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Collections.Generic;
-using TopLearn.Core.DTOs.User;
+using TopLearn.Core.DTOs;
 using TopLearn.Core.Security;
 using TopLearn.Core.Services.Interfaces;
 
@@ -19,8 +22,10 @@ namespace TopLearn.Web.Pages.Admin.Users
             _permissionService = permissionService;
         }
 
+        
         [BindProperty]
         public CreateUserViewModel CreateUserViewModel { get; set; }
+
         public void OnGet()
         {
             ViewData["Roles"] = _permissionService.GetRoles();
@@ -29,16 +34,16 @@ namespace TopLearn.Web.Pages.Admin.Users
         public IActionResult OnPost(List<int> SelectedRoles)
         {
             if (!ModelState.IsValid)
-            {
                 return Page();
-            }
 
-            int userId = _userService.AddUserByAdmin(CreateUserViewModel);
+            int userId = _userService.AddUserFromAdmin(CreateUserViewModel);
 
-            //Add roles
-            _permissionService.AddRolesToUser(SelectedRoles, userId);
+            //Add Roles
+            _permissionService.AddRolesToUser(SelectedRoles,userId);
+
 
             return Redirect("/Admin/Users");
+
         }
     }
 }

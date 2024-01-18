@@ -2,21 +2,19 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Microsoft.EntityFrameworkCore;
 using TopLearn.Core.Convertors;
-using TopLearn.Core.DTOs.User;
+using TopLearn.Core.DTOs;
 using TopLearn.Core.Generator;
 using TopLearn.Core.Security;
 using TopLearn.Core.Services.Interfaces;
 using TopLearn.DataLayer.Context;
 using TopLearn.DataLayer.Entities.User;
 using TopLearn.DataLayer.Entities.Wallet;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TopLearn.Core.Services
 {
-    public class UserService : IUserService
+    public class UserService:IUserService
     {
         private TopLearnContext _context;
 
@@ -104,13 +102,14 @@ namespace TopLearn.Core.Services
         public InformationUserViewModel GetUserInformation(string username)
         {
             var user = GetUserByUserName(username);
-            InformationUserViewModel information = new InformationUserViewModel();
+            InformationUserViewModel information=new InformationUserViewModel();
             information.UserName = user.UserName;
             information.Email = user.Email;
             information.RegisterDate = user.RegisterDate;
             information.Wallet = BalanceUserWallet(username);
 
             return information;
+
         }
 
         public InformationUserViewModel GetUserInformation(int userId)
@@ -162,9 +161,9 @@ namespace TopLearn.Core.Services
 
                 profile.AvatarName = NameGenerator.GenerateUniqCode() + Path.GetExtension(profile.UserAvatar.FileName);
                 imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatar", profile.AvatarName);
-                using (var stream = new FileStream(imagePath, FileMode.Create))
+                using (var stream = new FileStream(imagePath,FileMode.Create))
                 {
-                    profile.UserAvatar.CopyTo(stream);
+                   profile.UserAvatar.CopyTo(stream);
                 }
 
             }
@@ -197,7 +196,7 @@ namespace TopLearn.Core.Services
             int userId = GetUserIdByUserName(userName);
 
             var enter = _context.Wallets
-                .Where(w => w.UserId == userId && w.TypeId == 1 && w.IsPay)
+                .Where(w => w.UserId == userId && w.TypeId == 1&&w.IsPay)
                 .Select(w => w.Amount).ToList();
 
             var exit = _context.Wallets
@@ -213,7 +212,7 @@ namespace TopLearn.Core.Services
 
             return _context.Wallets
                 .Where(w => w.IsPay && w.UserId == userId)
-                .Select(w => new WalletViewModel()
+                .Select(w=> new WalletViewModel()
                 {
                     Amount = w.Amount,
                     DateTime = w.CreateDate,
@@ -225,7 +224,7 @@ namespace TopLearn.Core.Services
 
         public int ChargeWallet(string userName, int amount, string description, bool isPay = false)
         {
-            Wallet wallet = new Wallet()
+            Wallet wallet=new Wallet()
             {
                 Amount = amount,
                 CreateDate = DateTime.Now,
@@ -234,7 +233,7 @@ namespace TopLearn.Core.Services
                 TypeId = 1,
                 UserId = GetUserIdByUserName(userName)
             };
-            return AddWallet(wallet);
+           return AddWallet(wallet);
         }
 
         public int AddWallet(Wallet wallet)
@@ -255,7 +254,7 @@ namespace TopLearn.Core.Services
             _context.SaveChanges();
         }
 
-        public UsersForAdminViewModel GetUsers(int pageId = 1, string filterEmail = "", string filterUserName = "")
+        public UserForAdminViewModel GetUsers(int pageId = 1, string filterEmail = "", string filterUserName = "")
         {
             IQueryable<User> result = _context.Users;
 
@@ -269,11 +268,12 @@ namespace TopLearn.Core.Services
                 result = result.Where(u => u.UserName.Contains(filterUserName));
             }
 
-            // Show Item in page
+            // Show Item In Page
             int take = 20;
             int skip = (pageId - 1) * take;
 
-            UsersForAdminViewModel list = new UsersForAdminViewModel();
+
+            UserForAdminViewModel list=new UserForAdminViewModel();
             list.CurrentPage = pageId;
             list.PageCount = result.Count() / take;
             list.Users = result.OrderBy(u => u.RegisterDate).Skip(skip).Take(take).ToList();
@@ -281,9 +281,9 @@ namespace TopLearn.Core.Services
             return list;
         }
 
-        public UsersForAdminViewModel GetDeletedUsers(int pageId = 1, string filterEmail = "", string filterUserName = "")
+        public UserForAdminViewModel GetDeleteUsers(int pageId = 1, string filterEmail = "", string filterUserName = "")
         {
-            IQueryable<User> result = _context.Users.IgnoreQueryFilters().Where(u => u.IsDeleted);
+            IQueryable<User> result = _context.Users.IgnoreQueryFilters().Where(u=>u.IsDeleted);
 
             if (!string.IsNullOrEmpty(filterEmail))
             {
@@ -295,11 +295,12 @@ namespace TopLearn.Core.Services
                 result = result.Where(u => u.UserName.Contains(filterUserName));
             }
 
-            // Show Item in page
+            // Show Item In Page
             int take = 20;
             int skip = (pageId - 1) * take;
 
-            UsersForAdminViewModel list = new UsersForAdminViewModel();
+
+            UserForAdminViewModel list = new UserForAdminViewModel();
             list.CurrentPage = pageId;
             list.PageCount = result.Count() / take;
             list.Users = result.OrderBy(u => u.RegisterDate).Skip(skip).Take(take).ToList();
@@ -307,14 +308,14 @@ namespace TopLearn.Core.Services
             return list;
         }
 
-        public int AddUserByAdmin(CreateUserViewModel user)
+        public int AddUserFromAdmin(CreateUserViewModel user)
         {
-            User addUser = new User();
+            User addUser=new User();
             addUser.Password = PasswordHelper.EncodePasswordMd5(user.Password);
             addUser.ActiveCode = NameGenerator.GenerateUniqCode();
             addUser.Email = user.Email;
             addUser.IsActive = true;
-            addUser.RegisterDate = DateTime.Now;
+            addUser.RegisterDate=DateTime.Now;
             addUser.UserName = user.UserName;
 
             #region Save Avatar
@@ -322,7 +323,6 @@ namespace TopLearn.Core.Services
             if (user.UserAvatar != null)
             {
                 string imagePath = "";
-
                 addUser.UserAvatar = NameGenerator.GenerateUniqCode() + Path.GetExtension(user.UserAvatar.FileName);
                 imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatar", addUser.UserAvatar);
                 using (var stream = new FileStream(imagePath, FileMode.Create))
@@ -334,6 +334,7 @@ namespace TopLearn.Core.Services
             #endregion
 
             return AddUser(addUser);
+
         }
 
         public EditUserViewModel GetUserForShowInEditMode(int userId)
@@ -345,30 +346,32 @@ namespace TopLearn.Core.Services
                     AvatarName = u.UserAvatar,
                     Email = u.Email,
                     UserName = u.UserName,
-                    UserRoles = u.UserRoles.Select(r => r.RoleId).ToList()
+                    UserRoles = u.UserRoles.Select(r=>r.RoleId).ToList()
                 }).Single();
         }
 
-        public void EditUserByAdmin(EditUserViewModel editUser)
+        public void EditUserFromAdmin(EditUserViewModel editUser)
         {
-            var user = GetUserById(editUser.UserId);
+            User user = GetUserById(editUser.UserId);
             user.Email = editUser.Email;
             if (!string.IsNullOrEmpty(editUser.Password))
+            {
                 user.Password = PasswordHelper.EncodePasswordMd5(editUser.Password);
+            }
+
             if (editUser.UserAvatar != null)
             {
-                //Delete old image
-                if (editUser.AvatarName != "Default.jpg")
+                //Delete old Image
+                if (editUser.AvatarName != "Defult.jpg")
                 {
-                    string deletePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatar",
-                        editUser.AvatarName);
+                   string deletePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatar", editUser.AvatarName);
                     if (File.Exists(deletePath))
                     {
                         File.Delete(deletePath);
                     }
                 }
 
-                //Save new image
+                //Save New Image
                 user.UserAvatar = NameGenerator.GenerateUniqCode() + Path.GetExtension(editUser.UserAvatar.FileName);
                 string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatar", user.UserAvatar);
                 using (var stream = new FileStream(imagePath, FileMode.Create))

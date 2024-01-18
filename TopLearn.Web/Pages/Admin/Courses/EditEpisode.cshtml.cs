@@ -4,32 +4,30 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using TopLearn.Core.Services.Interfaces;
 using TopLearn.DataLayer.Entities.Courses;
 
-namespace TopLearn.Web.Pages.Admin.Courses;
-
-public class EditEpisode : PageModel
+namespace TopLearn.Web.Pages.Admin.Courses
 {
-    private ICourseService _courseService;
-
-    public EditEpisode(ICourseService courseService)
+    public class EditEpisodeModel : PageModel
     {
-        _courseService = courseService;
-    }
-    
-    [BindProperty]
-    public CourseEpisode CourseEpisode { get; set; }
-    
-    public void OnGet(int id)
-    {
-        CourseEpisode = _courseService.GetEpisodeById(id);
-    }
+        private ICourseService _courseService;
 
-    public IActionResult OnPost(IFormFile fileEpisode)
-    {
-        if (!ModelState.IsValid)
-            return Page();
-
-        if (fileEpisode != null)
+        public EditEpisodeModel(ICourseService courseService)
         {
+            _courseService = courseService;
+        }
+
+        [BindProperty]
+        public CourseEpisode CourseEpisode { get; set; }
+        public void OnGet(int id)
+        {
+            CourseEpisode = _courseService.GetEpisodeById(id);
+        }
+
+        public IActionResult OnPost(IFormFile fileEpisode)
+        {
+            if (!ModelState.IsValid)
+                return Page();
+
+            if (fileEpisode != null)
             {
                 if (_courseService.CheckExistFile(fileEpisode.FileName))
                 {
@@ -37,10 +35,11 @@ public class EditEpisode : PageModel
                     return Page();
                 }
             }
+
+
+            _courseService.EditEpisode(CourseEpisode, fileEpisode);
+
+            return Redirect("/Admin/Courses/IndexEpisode/" + CourseEpisode.CourseId);
         }
-
-        _courseService.EditEpisode(CourseEpisode, fileEpisode);
-
-        return Redirect("/Admin/Courses/IndexEpisode/?id=" + CourseEpisode.CourseId);
     }
 }
