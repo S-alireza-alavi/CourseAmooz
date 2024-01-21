@@ -70,5 +70,7 @@ public class Course
 
     public List<CourseEpisode> CourseEpisodes { get; set; }
 
+    public List<CourseComment> CourseComments { get; set; }
+
     #endregion
 }

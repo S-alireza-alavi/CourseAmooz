@@ -33,8 +33,8 @@ namespace TopLearn.DataLayer.Context
 
         #region Permission
 
-        public DbSet<Permission> Permission { get; set; }
-        public DbSet<RolePermission> RolePermission { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
+        public DbSet<RolePermission> RolePermissions { get; set; }
 
         #endregion
 
@@ -45,6 +45,7 @@ namespace TopLearn.DataLayer.Context
         public DbSet<CourseStatus> CourseStatuses { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<CourseEpisode> CourseEpisodes { get; set; }
+        public DbSet<CourseComment> CourseComments { get; set; }
 
 
         #endregion
