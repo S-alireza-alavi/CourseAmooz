@@ -4,16 +4,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TopLearn.Core.Services.Interfaces;
+using TopLearn.DataLayer.Entities.Courses;
 
 namespace TopLearn.Web.Controllers
 {
     public class CourseController : Controller
     {
         private ICourseService _courseService;
+        private IUserService _userService;
 
-        public CourseController(ICourseService courseService)
+        public CourseController(ICourseService courseService, IUserService userService)
         {
             _courseService = courseService;
+            _userService = userService;
         }
 
         public IActionResult Index(int pageId = 1, string filter = ""
@@ -38,6 +41,22 @@ namespace TopLearn.Web.Controllers
             }
 
             return View(course);
+        }
+
+        [HttpPost]
+        public IActionResult CreateComment(CourseComment comment)
+        {
+            comment.IsDeleted = false;
+            comment.CreateDate = DateTime.Now;
+            comment.UserId = _userService.GetUserIdByUserName(User.Identity.Name);
+            _courseService.AddComment(comment);
+
+            return View("ShowComment", _courseService.GetCourseComment(comment.CourseId));
+        }
+
+        public IActionResult ShowComment(int id, int pageId = 1)
+        {
+            return View(_courseService.GetCourseComment(id, pageId));
         }
     }
 }

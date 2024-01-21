@@ -69,14 +69,14 @@ namespace TopLearn.Core.Services
 
         public List<Permission> GetAllPermission()
         {
-            return _context.Permission.ToList();
+            return _context.Permissions.ToList();
         }
 
         public void AddPermissionsToRole(int roleId, List<int> permission)
         {
             foreach (var p in permission)
             {
-                _context.RolePermission.Add(new RolePermission()
+                _context.RolePermissions.Add(new RolePermission()
                 {
                     PermissionId = p,
                     RoleId = roleId
@@ -88,15 +88,15 @@ namespace TopLearn.Core.Services
 
         public List<int> PermissionsRole(int roleId)
         {
-            return _context.RolePermission
+            return _context.RolePermissions
                 .Where(r => r.RoleId == roleId)
                 .Select(r => r.PermissionId).ToList();
         }
 
         public void UpdatePermissionsRole(int roleId, List<int> permissions)
         {
-            _context.RolePermission.Where(p=>p.RoleId==roleId)
-                .ToList().ForEach(p=> _context.RolePermission.Remove(p));
+            _context.RolePermissions.Where(p=>p.RoleId==roleId)
+                .ToList().ForEach(p=> _context.RolePermissions.Remove(p));
 
             AddPermissionsToRole(roleId,permissions);
         }
@@ -111,7 +111,7 @@ namespace TopLearn.Core.Services
             if (!UserRoles.Any())
                 return false;
 
-            List<int> RolesPermission = _context.RolePermission
+            List<int> RolesPermission = _context.RolePermissions
                 .Where(p => p.PermissionId == permissionId)
                 .Select(p=>p.RoleId).ToList();
 
