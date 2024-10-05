@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -17,18 +20,19 @@ namespace TopLearn.Web.Pages.Admin.Courses
             _courseService = courseService;
         }
 
-        [BindProperty] public Course Course { get; set; }
+        [BindProperty]
+        public Course Course { get; set; }
 
         public void OnGet()
         {
             var groups = _courseService.GetGroupForManageCourse();
-            ViewData["Groups"] = new SelectList(groups, "Value", "Text");
+            ViewData["Groups"] = new SelectList(groups,"Value","Text");
 
             var subGrous = _courseService.GetSubGroupForManageCourse(int.Parse(groups.First().Value));
             ViewData["SubGroups"] = new SelectList(subGrous, "Value", "Text");
 
             var teachers = _courseService.GetTeachers();
-            ViewData["Teachers"] = new SelectList(teachers, "Value", "Text");
+            ViewData["Teachers"]=new SelectList(teachers,"Value","Text");
 
             var levels = _courseService.GetLevels();
             ViewData["Levels"] = new SelectList(levels, "Value", "Text");
@@ -39,10 +43,10 @@ namespace TopLearn.Web.Pages.Admin.Courses
 
         public IActionResult OnPost(IFormFile imgCourseUp, IFormFile demoUp)
         {
-            if (!ModelState.IsValid)
-                return Page();
+            if(!ModelState.IsValid)
+            return Page();
 
-            _courseService.AddCourse(Course, imgCourseUp, demoUp);
+            _courseService.AddCourse(Course,imgCourseUp,demoUp);
 
             return RedirectToPage("Index");
         }

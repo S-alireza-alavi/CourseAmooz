@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -25,6 +21,7 @@ namespace TopLearn.Web.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.PopularCourses = _courseService.GetPopularCourses();
             return View(_courseService.GetCourse().Item1);
         }
 

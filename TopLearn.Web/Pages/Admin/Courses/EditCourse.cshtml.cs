@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -24,19 +27,32 @@ namespace TopLearn.Web.Pages.Admin.Courses
             Course = _courseService.GetCourseById(id);
 
             var groups = _courseService.GetGroupForManageCourse();
-            ViewData["Groups"] = new SelectList(groups, "Value", "Text",Course.GroupId);
+            ViewData["Groups"] = new SelectList(groups, "Value", "Text", Course.GroupId);
 
-            var subGrous = _courseService.GetSubGroupForManageCourse(int.Parse(groups.First().Value));
-            ViewData["SubGroups"] = new SelectList(subGrous, "Value", "Text",Course.SubGroup??0);
+            List<SelectListItem> subGroups = new List<SelectListItem>()
+            {
+                new SelectListItem(){ Text = "انتخاب کنید", Value = "" }
+            };
+
+            subGroups.AddRange(_courseService.GetSubGroupForManageCourse(Course.GroupId));
+
+            string selectedSubGroup = null;
+
+            if (Course.SubGroup != null)
+            {
+                selectedSubGroup = Course.SubGroup.ToString();
+            }
+
+            ViewData["SubGroups"] = new SelectList(subGroups, "Value", "Text", selectedSubGroup);
 
             var teachers = _courseService.GetTeachers();
-            ViewData["Teachers"] = new SelectList(teachers, "Value", "Text",Course.TeacherId);
+            ViewData["Teachers"] = new SelectList(teachers, "Value", "Text", Course.TeacherId);
 
             var levels = _courseService.GetLevels();
-            ViewData["Levels"] = new SelectList(levels, "Value", "Text",Course.LevelId);
+            ViewData["Levels"] = new SelectList(levels, "Value", "Text", Course.LevelId);
 
             var statues = _courseService.GetStatues();
-            ViewData["Statues"] = new SelectList(statues, "Value", "Text",Course.StatusId);
+            ViewData["Statues"] = new SelectList(statues, "Value", "Text", Course.StatusId);
 
         }
 
@@ -45,7 +61,7 @@ namespace TopLearn.Web.Pages.Admin.Courses
             if (!ModelState.IsValid)
                 return Page();
 
-            _courseService.UpdateCourse(Course,imgCourseUp,demoUp);
+            _courseService.UpdateCourse(Course, imgCourseUp, demoUp);
 
             return RedirectToPage("Index");
         }

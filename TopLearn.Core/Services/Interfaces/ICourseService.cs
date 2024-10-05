@@ -11,12 +11,15 @@ namespace TopLearn.Core.Services.Interfaces
     {
         #region Group
 
-        List<CourseGroup> GetAllGroup();
+        List<CourseGroup> GetAllGroups();
         List<SelectListItem> GetGroupForManageCourse();
         List<SelectListItem> GetSubGroupForManageCourse(int groupId);
         List<SelectListItem> GetTeachers();
         List<SelectListItem> GetLevels();
         List<SelectListItem> GetStatues();
+        void AddGroup(CourseGroup courseGroup);
+        void UpdateGroup(CourseGroup courseGroup);
+        CourseGroup GetGroupById(int id);
 
 
         #endregion
@@ -35,6 +38,7 @@ namespace TopLearn.Core.Services.Interfaces
             int take = 0);
 
         Course GetCourseForShow(int courseId);
+        List<ShowCourseListItemViewModel> GetPopularCourses();
 
         #endregion
 

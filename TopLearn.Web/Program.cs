@@ -59,6 +59,7 @@ namespace TopLearn.Web
             builder.Services.AddTransient<IViewRenderService, RenderViewToString>();
             builder.Services.AddTransient<IPermissionService, PermissionService>();
             builder.Services.AddTransient<ICourseService, CourseService>();
+            builder.Services.AddTransient<IOrderService, OrderService>();
 
             #endregion
 

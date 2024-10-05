@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.IO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TopLearn.Core.Services.Interfaces;
 using TopLearn.DataLayer.Entities.Courses;
@@ -11,12 +11,14 @@ namespace TopLearn.Web.Controllers
     public class CourseController : Controller
     {
         private ICourseService _courseService;
+        private IOrderService _orderService;
         private IUserService _userService;
 
-        public CourseController(ICourseService courseService, IUserService userService)
+        public CourseController(ICourseService courseService, IUserService userService, IOrderService orderService)
         {
             _courseService = courseService;
             _userService = userService;
+            _orderService = orderService;
         }
 
         public IActionResult Index(int pageId = 1, string filter = ""
@@ -24,7 +26,7 @@ namespace TopLearn.Web.Controllers
             int startPrice = 0, int endPrice = 0, List<int> selectedGroups = null)
         {
             ViewBag.selectedGroups = selectedGroups;
-            ViewBag.Groups = _courseService.GetAllGroup();
+            ViewBag.Groups = _courseService.GetAllGroups();
             ViewBag.pageId = pageId;
             return View(_courseService.GetCourse(pageId, filter, getType, orderByType, startPrice, endPrice,
                 selectedGroups, 9));
@@ -41,6 +43,39 @@ namespace TopLearn.Web.Controllers
             }
 
             return View(course);
+        }
+
+        [Authorize]
+        public IActionResult BuyCourse(int id)
+        {
+            int orderId = _orderService.AddOrder(User.Identity.Name, id);
+            return Redirect("/UserPanel/MyOrders/ShowOrder/" + orderId);
+        }
+
+        [Route("DownloadFile/{episodeId}")]
+        public IActionResult DownloadFile(int episodeId)
+        {
+            var episode = _courseService.GetEpisodeById(episodeId);
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles",
+                episode.EpisodeFileName);
+            string fileName = episode.EpisodeFileName;
+
+            if (!episode.IsFree)
+            {
+                byte[] file = System.IO.File.ReadAllBytes(filePath);
+                return File(file, "application/force-download", fileName);
+            }
+
+            if (User.Identity.IsAuthenticated)
+            {
+                if (_orderService.IsUserInCourse(User.Identity.Name, episode.CourseId))
+                {
+                    byte[] file = System.IO.File.ReadAllBytes(filePath);
+                    return File(file, "application/force-download", fileName);
+                }
+            }
+            
+            return Forbid();
         }
 
         [HttpPost]

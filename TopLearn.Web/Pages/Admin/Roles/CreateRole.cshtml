@@ -58,9 +58,9 @@
 
                                                         @foreach (var sub2 in permissions.Where(p => p.ParentId == sub.PermissionId))
                                                         {
-                                                        <li>
-                                                        <input type="checkbox" name="SelectedPermission" value="@sub2.PermissionId" /> @sub2.PermissionTitle
-                                                        </li>
+                                                            <li>
+                                                                <input type="checkbox" name="SelectedPermission" value="@sub2.PermissionId" /> @sub2.PermissionTitle
+                                                            </li>
                                                         }
                                                     </ul>
                                                 }
@@ -79,5 +79,3 @@
 
     </form>
 </div>
-
-

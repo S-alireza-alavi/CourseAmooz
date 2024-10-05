@@ -45,7 +45,7 @@ namespace TopLearn.Web.Areas.UserPanel.Controllers
 
             var payment = new ZarinpalSandbox.Payment(charge.Amount);
 
-            var res =  payment.PaymentRequest("شارژ کیف پول", "/OnlinePayment/" + walletId,"Info@topLearn.Com","09197070750");
+            var res =  payment.PaymentRequest("شارژ کیف پول", "https://localhost:44349/OnlinePayment/" + walletId,"Info@topLearn.Com","09197070750");
 
             if (res.Result.Status == 100)
             {

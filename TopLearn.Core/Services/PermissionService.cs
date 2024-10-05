@@ -113,11 +113,9 @@ namespace TopLearn.Core.Services
 
             List<int> RolesPermission = _context.RolePermissions
                 .Where(p => p.PermissionId == permissionId)
-                .Select(p=>p.RoleId).ToList();
+                .Select(p => p.RoleId).ToList();
 
             return RolesPermission.Any(p => UserRoles.Contains(p));
-
-
         }
     }
 }

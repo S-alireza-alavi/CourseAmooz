@@ -95,7 +95,7 @@ namespace TopLearn.Web.Controllers
 
         [HttpPost]
         [Route("Login")]
-        public ActionResult Login(LoginViewModel login)
+        public ActionResult Login(LoginViewModel login, string returnUrl = "/")
         {
             if (!ModelState.IsValid)
             {
@@ -122,6 +122,12 @@ namespace TopLearn.Web.Controllers
                     HttpContext.SignInAsync(principal, properties);
 
                     ViewBag.IsSuccess = true;
+
+                    if (returnUrl != "/")
+                    {
+                        return Redirect(returnUrl);
+                    }
+                    
                     return View();
                 }
                 else

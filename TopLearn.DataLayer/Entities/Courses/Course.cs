@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TopLearn.DataLayer.Entities.Order;
 
 namespace TopLearn.DataLayer.Entities.Courses;
 
@@ -67,9 +68,9 @@ public class Course
 
     [ForeignKey("LevelId")]
     public CourseLevel CourseLevel { get; set; }
-
     public List<CourseEpisode> CourseEpisodes { get; set; }
-
+    public List<OrderDetail> OrderDetails { get; set; }
+    public List<UserCourse> UserCourses { get; set; }
     public List<CourseComment> CourseComments { get; set; }
 
     #endregion

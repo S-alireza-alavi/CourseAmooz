@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using TopLearn.Core.Services.Interfaces;
@@ -15,13 +19,13 @@ namespace TopLearn.Web.Pages.Admin.Courses
             _courseService = courseService;
         }
 
+        
 
-
-        [BindProperty] public CourseEpisode CourseEpisode { get; set; }
-
+        [BindProperty]
+        public CourseEpisode CourseEpisode { get; set; }
         public void OnGet(int id)
         {
-            CourseEpisode = new CourseEpisode();
+            CourseEpisode=new CourseEpisode();
             CourseEpisode.CourseId = id;
 
         }
